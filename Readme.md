@@ -6,9 +6,10 @@ This project aims to provide a risk assessment framework to identify subsidized 
 
 https://github.com/user-attachments/assets/96039cf8-8050-431b-85c1-d9bd3e332030
 
-**Eldery Supply**
+**Property Risk**
 
-![image](https://github.com/user-attachments/assets/334bf4e6-2318-4892-9b56-abac7f3f5047)
+<img width="1372" alt="image" src="https://github.com/user-attachments/assets/c9fd7248-7686-4ff7-a0df-d9eb3143e42a" />
+
 
 
 **Housing Gap by segments**
