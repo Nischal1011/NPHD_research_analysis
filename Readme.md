@@ -2,6 +2,20 @@
 
 This project aims to provide a risk assessment framework to identify subsidized housing properties that are at risk of losing their affordability status due to expiring subsidies. It leverages data from the National Housing Preservation Database (NHPD) and various other data sources to make informed decisions on housing management and preservation.
 
+**Subsidy Expiration**
+
+https://github.com/user-attachments/assets/96039cf8-8050-431b-85c1-d9bd3e332030
+
+**Eldery Supply**
+
+![image](https://github.com/user-attachments/assets/334bf4e6-2318-4892-9b56-abac7f3f5047)
+
+
+**Housing Gap by segments**
+![image](https://github.com/user-attachments/assets/887c08fc-7d90-41f7-bd53-0cb30ec6c22a)
+
+
+
 ## Table of Contents
 
 - [Installation](#installation)
