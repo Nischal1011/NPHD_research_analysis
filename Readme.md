@@ -38,10 +38,9 @@ pip install -r requirements.txt
 1. **API Keys**: Set up your API keys in a `.env` file to access external data sources such as the Census API and OpenAI (for potential analysis extensions).
    ```plaintext
    census_key='YOUR_CENSUS_API_KEY'
-   OPENAI_API_KEY='YOUR_OPENAI_API_KEY'
    ```
 
-2. **Data Preparation**: Ensure that the dataset `Active and Inconclusive Properties.xlsx` is available in a `data/` directory.
+2. **Data Preparation**: Ensure that the dataset `Active and Inconclusive Properties.xlsx` which can be requested from NHPD website and is available in a `data/` directory.
 
 3. **Run the Analysis**: Execute the data analysis scripts for various functionalities.
    - `nhpd.py`: Analyze properties at risk due to expiring subsidies.
