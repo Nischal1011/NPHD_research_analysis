@@ -1,2 +1,8 @@
 .env
 data/
+nhpd
+
+
+
+.DS_Store
+.vscode/

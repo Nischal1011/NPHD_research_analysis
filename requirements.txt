@@ -11,3 +11,9 @@ datetime
 scikit-learn
 xgboost
 shap
+censusdis
+geopandas
+fastparquet
+retrying
+imblearn
+lightgbm
