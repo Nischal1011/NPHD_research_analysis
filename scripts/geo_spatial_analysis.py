@@ -1328,8 +1328,8 @@ if __name__ == '__main__':
          df_subsidized_with_acs['geometry'] = df_subsidized_with_acs['geometry'].apply(lambda x: wkb.loads(x, hex=False) if pd.notnull(x) else None)
 
     # Save intermediate merged file
-    # df_subsidized_with_acs.to_csv("data/active_subsidized_with_acs.csv", index=False) # Can be large, consider parquet
-    # print("Saved merged data to data/active_subsidized_with_acs.csv")
+    df_subsidized_with_acs.to_csv("data/active_subsidized_with_acs.csv", index=False) # Can be large, consider parquet
+    print("Saved merged data to data/active_subsidized_with_acs.csv")
 
 
     # --- Expiration Choropleth Map ---
@@ -1355,6 +1355,7 @@ if __name__ == '__main__':
     # Convert to GeoDataFrame
     days_to_expire_by_tract_gdf = gpd.GeoDataFrame(days_to_expire_by_tract_df, geometry='geometry', crs="EPSG:4326") # Assume initial geometry is 4326
     days_to_expire_by_tract_gdf = days_to_expire_by_tract_gdf.dropna(subset=['geometry']) # Drop rows missing geometry for mapping
+    days_to_expire_by_tract_gdf['TotalUnitsFormatted'] = days_to_expire_by_tract_gdf['TotalUnits'].apply(lambda x: f"{int(x):,}" if pd.notna(x) else "N/A") # Format all for tooltip
     print(f"Created GeoDataFrame for expiration map with {len(days_to_expire_by_tract_gdf)} tract/expiration combinations.")
 
     # Create Folium Map for Expiration
@@ -1435,45 +1436,42 @@ if __name__ == '__main__':
     # Define Risk Categories based on HUD guidance (prioritize H&S flags)
     def assign_risk(row):
         score = row['MostRecentReacScore']
-        qualifier = row['MostRecentReacQualifier']
-        # date = row['MostRecentReacDate'] # Date not currently used in category logic
+        qualifier_raw = row['MostRecentReacQualifier']
+        qualifier = str(qualifier_raw).lower() if pd.notna(qualifier_raw) else ""
 
-        # Check if any score/qualifier exists
-        if pd.isna(score) and qualifier is None:
+        # Check if both score and qualifier are missing
+        if pd.isna(score) and qualifier == "":
             return "Unknown (No Score)"
 
         # Priority 1: Urgent H&S (Life-Threatening) - 'c' or 'c*'
-        if qualifier and 'c' in qualifier:
+        if 'c' in qualifier:
             return "Urgent (H&S Life-Threatening)"
 
-        # Priority 2: High Risk (Score < 60) - regardless of 'a' or 'b' flag
+        # Priority 2: High Risk (Score < 60)
         if pd.notna(score) and score < 60:
-             # Check if it wasn't already flagged as 'c'
-             if not (qualifier and 'c' in qualifier):
-                 return "High Risk (Score < 60)"
+            if 'c' not in qualifier:
+                return "High Risk (Score < 60)"
 
-        # Priority 3: Concern (H&S Non-Life-Threatening) - 'b' or 'b*' flag
-        if qualifier and 'b' in qualifier:
-            # Check if not already flagged as 'c' or 'High Risk' score
-            if not (qualifier and 'c' in qualifier) and not (pd.notna(score) and score < 60):
-                 return "Concern (H&S Non-Life-Threatening)"
+        # Priority 3: Concern (H&S Non-Life-Threatening) - 'b' or 'b*'
+        if 'b' in qualifier:
+            if 'c' not in qualifier and not (pd.notna(score) and score < 60):
+                return "Concern (H&S Non-Life-Threatening)"
 
-        # Priority 4: Moderate Risk (Score 60-79) - only if no 'b' or 'c' flag
+        # Priority 4: Moderate Risk (Score 60–79) – only if no 'b' or 'c'
         if pd.notna(score) and 60 <= score < 80:
-            if not (qualifier and ('b' in qualifier or 'c' in qualifier)):
-                 return "Moderate Risk (Score 60-79)"
+            if 'b' not in qualifier and 'c' not in qualifier:
+                return "Moderate Risk (Score 60-79)"
 
-        # Priority 5: Low Risk (Score >= 80) - only if no 'b' or 'c' flag
+        # Priority 5: Low Risk (Score ≥ 80) – only if no 'b' or 'c'
         if pd.notna(score) and score >= 80:
-            if not (qualifier and ('b' in qualifier or 'c' in qualifier)):
-                 return "Low Risk (Score >= 80)"
+            if 'b' not in qualifier and 'c' not in qualifier:
+                return "Low Risk (Score >= 80)"
 
-        # Catch-all for cases missed by above logic (e.g., only '*' qualifier)
-        # Or if only a qualifier like 'a' exists without a score meeting other criteria
-        if pd.isna(score) and qualifier is not None:
-            return f"Unknown (Qualifier Only: {qualifier})" # Specific unknown category
+        # If score is missing but qualifier exists
+        if pd.isna(score) and qualifier:
+            return f"Unknown (Qualifier Only: {qualifier_raw})"
 
-        return "Unknown (Review Logic)" # Should not be reached ideally
+        return "Unknown (Review Logic)"
 
 
     print("Assigning condition risk categories...")

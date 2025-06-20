@@ -43,7 +43,7 @@ def download_state_data(state_fips, dataset, vintage, variables, max_retries=3, 
 if __name__ == "__main__":
     # --- Configuration ---
     ACS_VINTAGE = 2023
-    OUTPUT_FILENAME = f"acs5_{ACS_VINTAGE}_tract_v1_data_multi_state.parquet"
+    OUTPUT_FILENAME = f"data/acs5_{ACS_VINTAGE}_tract_v1_data_multi_state.parquet"
 
     # Define the list of states
     state_fips_list = [
